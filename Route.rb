@@ -1,25 +1,21 @@
 class Route
-attr_reader :start_station, :end_station, :station_list
+  attr_reader :station_list
 
-	def initialize (start_station, inter_station_list = [], end_station)
-		@start_station = start_station
-		@inter_station_list = inter_station_list
-		@end_station = end_station
-		@station_list = [@start_station] + @inter_station_list + [@end_station]
-	end
+  def initialize(start_station, station_list = [], end_station)
+    @end_station = end_station
+    @station_list = [start_station] + station_list + [end_station]
+    end
 
-	def add_station (station)
-		@inter_station_list << station
-		@station_list = [@start_station] + @inter_station_list + [@end_station]
-	end
+  def add_station(station)
+    @station_list << @station_list[-1]
+    @station_list[-2] == station
+    end
 
-	def delete_station (station)
-		@inter_station_list.delete(station) if (station != @start_station && station != @end_station)
-		@station_list = [@start_station] + @inter_station_list + [@end_station]
-	end
+  def delete_station(station)
+    @station_list.delete(station) if (station != @station_list[0] or station != @station_list[-1])
+    end
 
-	def show_stations
-		@station_list.each {|station| puts station.name}
-	end
-
+  def show_stations
+    @station_list.each { |station| puts station.name }
+    end
 end
