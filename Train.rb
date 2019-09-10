@@ -33,15 +33,15 @@ class Train
   end
 
   def move_forward
-    if @route.end_station != self.current_station
-      self.current_station.train_out(self)
+    if next_station
+      current_station.train_out(self)
       @current_station_number += 1
       self.current_station.train_in(self)
     end
   end
 
   def move_back
-    if @route.end_station != self.current_station
+    if previous_station
       self.current_station.train_out(self)
       @current_station_number -= 1
       self.current_station.train_in(self)
@@ -49,14 +49,14 @@ class Train
   end
 
   def previous_station
-    @route.station_list[@current_station_number - 1] if @current_station_number != 0
+    @route.stations[@current_station_number - 1] if current_station != @route.start_station
   end
 
   def current_station
-    @route.station_list[@current_station_number]
+    @route.stations[@current_station_number]
   end
 
   def next_station
-    @route.station_list[@current_station_number + 1] if @current_station_number != (@route.station_list.size - 1)
+    @route.stations[@current_station_number + 1] if current_station != @route.end_station
   end
 end
