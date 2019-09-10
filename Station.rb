@@ -4,17 +4,17 @@ class Station
   def initialize(name)
     @name = name
     @train_list = []
-    end
+  end
 
   def train_in(train)
     @train_list << train
-    end
+  end
 
   def train_out(train)
     @train_list.delete(train)
-    end
+  end
 
   def number_of_typical_trains(type)
-    @train_list.count(type)
-    end
+    @train_list.count {|train| train.type == type}
+  end
 end
