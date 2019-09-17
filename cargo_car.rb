@@ -9,3 +9,4 @@ class CargoCar < Car
 
   #attr_reader :type #в тз нет, используется в Train
 end
+
