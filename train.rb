@@ -1,62 +1,95 @@
 class Train
-  attr_reader :cars_number, :type, :speed
+  attr_reader :speed, :cars, :number, :route #Есть в тз => public
 
-  def initialize(number, type, cars_number)
+
+  #number убрать в protected после создания класса меню
+
+  def initialize(number)
     @number = number
-    @type = type
-    @cars_number = cars_number
     @speed = 0
     @route = nil
     @current_station_number = nil
+    @cars = []
   end
 
-  def increase_speed(value)
+  def increase_speed(value) #Есть в тз => public
     @speed += value
   end
 
-  def decrease_speed(value)
+  def decrease_speed(value) #Есть в тз => public
     @speed -= value if @speed - value >= 0
   end
 
-  def add_car
-    @cars_number += 1 if @speed == 0
+  def add_car(car) #Есть в тз => public
+    @cars << car if stopped?
   end
 
-  def delete_car
-    @cars_number -= 1 if @speed == 0 && @cars_number > 0
+  def delete_car(car) #Есть в тз => public
+    @cars << car if stopped?
   end
 
-  def take_route(route)
+  def take_route(route) #Есть в тз => public
     @route = route
-    @route.start_station.train_in(self)
+    route.stations[0].train_in(self)
     @current_station_number = 0
   end
 
-  def move_forward
-    if next_station
+  def move_forward #Есть в тз => public
+    if !last_station?
       current_station.train_out(self)
       @current_station_number += 1
-      self.current_station.train_in(self)
+      current_station.train_in(self)
     end
   end
 
-  def move_back
-    if previous_station
-      self.current_station.train_out(self)
+  def move_back #Есть в тз => public
+    if !first_station?
+      current_station.train_out(self)
       @current_station_number -= 1
-      self.current_station.train_in(self)
+      current_station.train_in(self)
     end
   end
 
-  def previous_station
-    @route.stations[@current_station_number - 1] if current_station != @route.start_station
+  def previous_station #Есть в тз => public
+    @route.stations[@current_station_number - 1] if !first_station?
   end
 
-  def current_station
+  def current_station #Есть в тз => public
     @route.stations[@current_station_number]
   end
 
-  def next_station
-    @route.stations[@current_station_number + 1] if current_station != @route.end_station
+  def next_station #Есть в тз => public
+    @route.stations[@current_station_number + 1] if !last_station?
   end
+
+  protected
+  
+  def stopped? #используется в дочерних классах
+    @speed == 0
+  end
+
+  private 
+
+  def last_station? #только тут
+    current_station != @route.end_station
+  end
+
+  def first_station? #только тут 
+    current_station != @route.start_station
+  end
+
 end
+
+=begin
+Класс Train (Поезд):
+Имеет номер (произвольная строка) и тип (грузовой, пассажирский) и количество вагонов, эти данные указываются при создании экземпляра класса
+--Может набирать скорость
+--Может возвращать текущую скорость
+--Может тормозить (сбрасывать скорость до нуля)
+--Может возвращать количество вагонов
+--Может прицеплять/отцеплять вагоны (по одному вагону за операцию, метод просто увеличивает или уменьшает количество вагонов). Прицепка/отцепка вагонов может осуществляться только если поезд не движется.
+--Может принимать маршрут следования (объект класса Route). 
+При назначении маршрута поезду, поезд автоматически помещается на первую станцию в маршруте.
+--Может перемещаться между станциями, указанными в маршруте. Перемещение возможно вперед и назад, но только на 1 станцию за раз.
+--Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
+=end
