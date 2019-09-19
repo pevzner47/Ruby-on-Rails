@@ -1,13 +1,13 @@
 class Train
   attr_reader :speed, :cars, :number, :route
 
-  def initialize(number)
+  def initialize(number, type = nil)
     @number = number
     @speed = 0
     @route = nil
     @current_station_number = nil
     @cars = []
-    @type = nil
+    @type = type
   end
 
   def increase_speed(value) #Есть в тз => public

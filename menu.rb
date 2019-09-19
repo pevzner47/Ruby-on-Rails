@@ -1,10 +1,10 @@
 class Menu
 
-  def initialize(cars_arr, trains_arr, stations_arr, routes_arr)
-    @cars_arr = cars_arr
-    @trains_arr = trains_arr
-    @stations_arr = stations_arr
-    @routes_arr = routes_arr
+  def initialize
+    @cars_arr = []
+    @trains_arr = []
+    @stations_arr = []
+    @routes_arr = []
   end
 
   def run 
@@ -33,6 +33,8 @@ class Menu
   MESSAGE_TRAINS_ARR_EMPTY ='Ни одного поезда не найдено'
   MESSAGE_TRAIN_HAS_NO_ROUTE = 'У этого поезда еще не задан маршрут'
   MINIMUM_NUMBER_OF_STATIONS = 2
+
+  private_constant :MESSAGE_INPUT_ERROR, :MESSAGE_CAR_CREATED, :MESSAGE_TRAINS_ARR_EMPTY, :MESSAGE_TRAIN_HAS_NO_ROUTE, :MINIMUM_NUMBER_OF_STATIONS
 
   def message_in_car_creation_menu
     puts 'Выберите тип вагона'
@@ -460,7 +462,7 @@ class Menu
 
   def choose_route (routes_arr)
     loop do
-      message_in_choose_route
+      message_in_choose_route(routes_arr)
       key = gets.to_i
       case key
       when 1..routes_arr.size
