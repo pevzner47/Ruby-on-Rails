@@ -1,8 +1,5 @@
 class Train
-  attr_reader :speed, :cars, :number, :route #Есть в тз => public
-
-
-  #number убрать в protected после создания класса меню
+  attr_reader :speed, :cars, :number, :route
 
   def initialize(number)
     @number = number
@@ -10,6 +7,7 @@ class Train
     @route = nil
     @current_station_number = nil
     @cars = []
+    @type = nil
   end
 
   def increase_speed(value) #Есть в тз => public
@@ -35,19 +33,23 @@ class Train
   end
 
   def move_forward #Есть в тз => public
-    if !last_station?
-      current_station.train_out(self)
-      @current_station_number += 1
-      current_station.train_in(self)
+    if last_station?
+      return puts "Невозможно отправить поезд вперед!"
     end
+    current_station.train_out(self)
+    @current_station_number += 1
+    current_station.train_in(self)
+    puts "Поезд отправлен на станцию #{current_station.name}"
   end
 
   def move_back #Есть в тз => public
-    if !first_station?
-      current_station.train_out(self)
-      @current_station_number -= 1
-      current_station.train_in(self)
+    if first_station?
+      return puts "Невозможно отправить поезд назад!"
     end
+    current_station.train_out(self)
+    @current_station_number -= 1
+    current_station.train_in(self)
+    puts "Поезд отправлен на станцию #{current_station.name}"
   end
 
   def previous_station #Есть в тз => public
@@ -71,25 +73,11 @@ class Train
   private 
 
   def last_station? #только тут
-    current_station != @route.end_station
+    current_station == @route.end_station
   end
 
   def first_station? #только тут 
-    current_station != @route.start_station
+    current_station == @route.start_station
   end
 
 end
-
-=begin
-Класс Train (Поезд):
-Имеет номер (произвольная строка) и тип (грузовой, пассажирский) и количество вагонов, эти данные указываются при создании экземпляра класса
---Может набирать скорость
---Может возвращать текущую скорость
---Может тормозить (сбрасывать скорость до нуля)
---Может возвращать количество вагонов
---Может прицеплять/отцеплять вагоны (по одному вагону за операцию, метод просто увеличивает или уменьшает количество вагонов). Прицепка/отцепка вагонов может осуществляться только если поезд не движется.
---Может принимать маршрут следования (объект класса Route). 
-При назначении маршрута поезду, поезд автоматически помещается на первую станцию в маршруте.
---Может перемещаться между станциями, указанными в маршруте. Перемещение возможно вперед и назад, но только на 1 станцию за раз.
---Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
-=end

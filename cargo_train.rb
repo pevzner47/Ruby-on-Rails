@@ -1,15 +1,11 @@
 class CargoTrain < Train 
-
-  def initialize(number)
-    super
-    @type = 'Cargo'
+  attr_reader :type
+  
+  def initialize(number, type = 'Cargo')
+    super(number)
   end
 
-  def add_car(car) #Есть в тз => public
-    @cars << car if stopped? && @type == car.type
+  def add_car(car)
+    super(car) if @type == car.type
   end
-
-  protected
-
-  attr_reader :type #в тз нет, используется в Train
 end
