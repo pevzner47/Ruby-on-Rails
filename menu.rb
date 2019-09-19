@@ -77,7 +77,7 @@ class Menu
     puts "0: Назад"
   end
 
-  def message_in_intermediate_station_selection
+  def message_in_intermediate_station_selection(stations_to_show)
     puts 'Выберите промезжуточные станции'
     show_object_names(stations_to_show)
     puts "0: Назад"
@@ -247,7 +247,7 @@ class Menu
     if @stations_arr.size > MINIMUM_NUMBER_OF_STATIONS then 
       loop do
         @station_list = []
-        message_in_intermediate_station_selection
+        message_in_intermediate_station_selection(stations_to_show)
         key = gets.to_i
         case key
         when 1..stations_to_show.size
@@ -349,18 +349,18 @@ class Menu
 
   def routes_operation_delete_station(route)
     loop do
-      stations_to_delete = route.stations[1...-1]
-      if stations_to_delete.empty?
+      stations_to_show = route.stations[1...-1]
+      if stations_to_show.empty?
         puts 'Нечего удалять'
         break
       end
       puts 'Какую станцию удалить'
-      show_object_names(stations_to_delete)
+      show_object_names(stations_to_show)
       key = gets.chomp.to_i
       case key 
-      when 1..stations_to_delete.size
-        route.delete_station(stations_to_delete[key-1])
-        puts "Станция #{stations_to_delete[key-1].name} удалена" 
+      when 1..stations_to_show.size
+        route.delete_station(stations_to_show[key-1])
+        puts "Станция #{stations_to_show[key-1].name} удалена" 
         break
       else 
         puts 'Ошибка ввода'

@@ -2,7 +2,11 @@ class Route
   attr_reader :stations
 
   def initialize(start_station, *station_list, end_station)
-    @stations = [start_station] + station_list + [end_station]
+    if station_list[0].class != Array then
+      @stations = [start_station] + station_list + [end_station]
+    else
+      @stations = [start_station] + station_list[0] + [end_station]
+    end
   end
 
   def add_station(station) # Есть в тз => public

@@ -79,5 +79,4 @@ class Train
   def first_station? #только тут 
     current_station == @route.start_station
   end
-
 end
