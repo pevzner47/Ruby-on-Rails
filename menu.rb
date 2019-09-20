@@ -30,11 +30,15 @@ class Menu
   #message
   MESSAGE_INPUT_ERROR = "Ошибка ввода!"
   MESSAGE_CAR_CREATED = "Вагон создан!"
-  MESSAGE_TRAINS_ARR_EMPTY ='Ни одного поезда не найдено'
+  MESSAGE_CARS_ARR_EMPTY = 'Ни одного вагона не найдено'
+  MESSAGE_TRAINS_ARR_EMPTY = 'Ни одного поезда не найдено'
+  MESSAGE_STATIONS_ARR_EMPTY = 'Ни одной станции не найдено'
+  MESSAGE_ROUTES_ARR_EMPTY = 'Ни одного маршрута не найдено'
+  MESSAGE_NO_CARS_TO_ADD = 'Все вагоны уже добавлены к этому поезду'
   MESSAGE_TRAIN_HAS_NO_ROUTE = 'У этого поезда еще не задан маршрут'
   MINIMUM_NUMBER_OF_STATIONS = 2
 
-  private_constant :MESSAGE_INPUT_ERROR, :MESSAGE_CAR_CREATED, :MESSAGE_TRAINS_ARR_EMPTY, :MESSAGE_TRAIN_HAS_NO_ROUTE, :MINIMUM_NUMBER_OF_STATIONS
+  private_constant :MESSAGE_INPUT_ERROR, :MESSAGE_CAR_CREATED, :MESSAGE_TRAINS_ARR_EMPTY, :MESSAGE_TRAIN_HAS_NO_ROUTE, :MINIMUM_NUMBER_OF_STATIONS, :MESSAGE_CARS_ARR_EMPTY, :MESSAGE_STATIONS_ARR_EMPTY, :MESSAGE_ROUTES_ARR_EMPTY, :MESSAGE_NO_CARS_TO_ADD
 
   def message_in_car_creation_menu
     puts 'Выберите тип вагона'
@@ -77,8 +81,20 @@ class Menu
     puts "0: Назад"
   end
 
+  def message_in_start_station_selection(stations_to_show)
+    puts 'Выберите начальную станцию маршрута'
+    show_object_names(stations_to_show)
+    puts "0: Назад"
+  end
+
   def message_in_intermediate_station_selection(stations_to_show)
     puts 'Выберите промезжуточные станции'
+    show_object_names(stations_to_show)
+    puts "0: Назад"
+  end
+  
+  def message_in_end_station_selection(stations_to_show)
+    puts 'Выберите конечную станцию'
     show_object_names(stations_to_show)
     puts "0: Назад"
   end
@@ -88,6 +104,8 @@ class Menu
     puts '2: Удалить вагон'
     puts '3: Взять маршрут'
     puts '4: Отправить по заданному маршруту'
+    puts '5: Показать положение позеда в маршруте'
+    puts '0: Назад'
   end
 
   def message_in_route_operation_menu
@@ -203,9 +221,8 @@ class Menu
 
   def start_station_selection(stations_to_show)
     loop do
-      puts 'Выберите начальную станцию маршрута'
+      message_in_start_station_selection(stations_to_show)
       @start_station = false
-      show_object_names(stations_to_show)
       key = gets.to_i
       case key
       when 1..stations_to_show.size
@@ -213,7 +230,6 @@ class Menu
         stations_to_show.delete(@start_station)
         break
       when 0
-        puts "0: Назад"
         break
       else
         puts MESSAGE_INPUT_ERROR
@@ -223,10 +239,9 @@ class Menu
   end
 
   def end_station_selection(stations_to_show)
-    @end_station = false
     loop do
-      puts 'Выберите конечную станцию'
-      show_object_names(stations_to_show)
+      @end_station = false
+      message_in_end_station_selection(stations_to_show)
       key = gets.to_i
       case key
       when 1..stations_to_show.size
@@ -234,7 +249,6 @@ class Menu
         stations_to_show.delete(@end_station)
         break
       when 0
-        puts "0: Назад"
           break
       else
         puts MESSAGE_INPUT_ERROR
@@ -390,6 +404,7 @@ class Menu
   end
 
   def route_operation_menu
+    return puts MESSAGE_ROUTES_ARR_EMPTY if @routes_arr.empty?
     loop do
       message_in_route_operation_menu
       key = gets.chomp.to_i
@@ -421,14 +436,13 @@ class Menu
     end
   end
 
-  def show_train_list_of_this_station (station)
-    if station.train_list.empty? then
-      return puts 'На станции еще нет поездов'
-    end
+  def show_train_list_of_this_station (station)    
+    return puts 'На станции еще нет поездов' if station.train_list.empty?
     station.train_list.each {|train| puts train.number}
   end
 
   def station_operation_menu
+    return puts MESSAGE_STATIONS_ARR_EMPTY if @stations_arr.empty?
     loop do
       message_in_station_operation_menu
       key = gets.to_i
@@ -505,8 +519,10 @@ class Menu
   end
 
   def train_operation_add_car
+    return puts MESSAGE_CARS_ARR_EMPTY if @cars_arr.empty?
     train = choose_train
     cars_to_show = @cars_arr - train.cars
+    return puts MESSAGE_NO_CARS_TO_ADD if cars_to_show.empty?
     train.add_car (choose_car(cars_to_show))
     puts 'Вагон добавлен'
   end
@@ -542,10 +558,15 @@ class Menu
     end
   end
 
+  def train_operation_show_current
+    train = choose_train
+    puts "Предыдущая станция: #{train.previous_station.name}" if train.previous_station
+    puts "Текущая станция: #{train.current_station.name}" if train.current_station
+    puts "Следующая станция: #{train.next_station.name}" if train.next_station
+  end
+
   def train_operation_menu
-    if @trains_arr.empty? then
-      return puts MESSAGE_TRAINS_ARR_EMPTY
-    end
+    return puts MESSAGE_TRAINS_ARR_EMPTY if @trains_arr.empty?
     loop do 
       message_in_train_operation_menu
       key = gets.to_i
@@ -562,6 +583,12 @@ class Menu
         break
       when 4
         train_operation_send_train
+        break
+      when 5
+        train_operation_show_current
+        break
+      when 0
+        break
       else  
         puts 'Ошибка ввода!'
         next
