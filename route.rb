@@ -5,7 +5,7 @@ class Route
     if station_list[0].class != Array then
       @stations = [start_station] + station_list + [end_station]
     end
-    if station_list.empty? then
+    if station_list[0] == nil  then
       @stations = [start_station] + [end_station]
     else
       @stations = [start_station] + station_list[0] + [end_station]

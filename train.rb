@@ -19,11 +19,17 @@ class Train
   end
 
   def add_car(car) #Есть в тз => public
-    @cars << car if stopped?
+    if stopped? then
+      @cars << car if stopped?
+      puts 'Вагон добавлен'    
+    end
   end
 
   def delete_car(car) #Есть в тз => public
-    @cars << car if stopped?
+    if stopped? then 
+      @cars.delete(car)
+      puts 'Вагон удален'
+    end
   end
 
   def take_route(route) #Есть в тз => public
@@ -79,4 +85,5 @@ class Train
   def first_station? #только тут 
     current_station == @route.start_station
   end
+
 end

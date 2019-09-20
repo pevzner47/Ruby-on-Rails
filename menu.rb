@@ -22,7 +22,7 @@ class Menu
         puts MESSAGE_INPUT_ERROR
         next
       end
-    end
+    end   
   end
 
   private
@@ -36,6 +36,7 @@ class Menu
   MESSAGE_ROUTES_ARR_EMPTY = 'Ни одного маршрута не найдено'
   MESSAGE_NO_CARS_TO_ADD = 'Все вагоны уже добавлены к этому поезду'
   MESSAGE_TRAIN_HAS_NO_ROUTE = 'У этого поезда еще не задан маршрут'
+  MESSAGE_NO_CARS_TO_DELETE = 'У поезда нет вагонов'
   MINIMUM_NUMBER_OF_STATIONS = 2
 
   private_constant :MESSAGE_INPUT_ERROR, :MESSAGE_CAR_CREATED, :MESSAGE_TRAINS_ARR_EMPTY, :MESSAGE_TRAIN_HAS_NO_ROUTE, :MINIMUM_NUMBER_OF_STATIONS, :MESSAGE_CARS_ARR_EMPTY, :MESSAGE_STATIONS_ARR_EMPTY, :MESSAGE_ROUTES_ARR_EMPTY, :MESSAGE_NO_CARS_TO_ADD
@@ -524,14 +525,13 @@ class Menu
     cars_to_show = @cars_arr - train.cars
     return puts MESSAGE_NO_CARS_TO_ADD if cars_to_show.empty?
     train.add_car (choose_car(cars_to_show))
-    puts 'Вагон добавлен'
   end
 
   def train_operation_delete_car
     train = choose_train
     cars_to_show = train.cars
+    return puts MESSAGE_NO_CARS_TO_DELETE if cars_to_show.empty?
     train.delete_car (choose_car(cars_to_show))
-    puts 'Вагон удален'
   end
 
   def train_operation_send_train
@@ -633,8 +633,10 @@ class Menu
         break
       when 2
         station_operation_menu
+        break
       when 3
         route_operation_menu
+        break
       when 0 
         break
       else
