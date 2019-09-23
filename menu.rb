@@ -22,7 +22,8 @@ class Menu
         puts MESSAGE_INPUT_ERROR
         next
       end
-    end   
+    end
+    Train.instanses
   end
 
   private
@@ -106,6 +107,8 @@ class Menu
     puts '3: Взять маршрут'
     puts '4: Отправить по заданному маршруту'
     puts '5: Показать положение позеда в маршруте'
+    puts '6: Информация о производителе'
+    puts '7: Найти поезд по номеру'
     puts '0: Назад'
   end
 
@@ -117,9 +120,10 @@ class Menu
 
   def message_in_operation_menu
     puts 'Выберите объект'
-    puts '1: Поезд'
-    puts '2: Станция'
-    puts '3: Маршрут'
+    puts '1: Вагон'
+    puts '2: Поезд'
+    puts '3: Станция'
+    puts '4: Маршрут'
     puts '0: Назад'
   end
 
@@ -449,7 +453,7 @@ class Menu
       key = gets.to_i
       case key
       when 1
-        show_object_names(@stations_arr)
+        show_object_names(Station.all)
         break
       when 2
         show_train_list_of_this_station (choose_station)
@@ -463,6 +467,47 @@ class Menu
     end
   end
   #train
+
+  def message_in_show_or_set_monufacturer_name
+    puts "1: Показать название компании-производителя"
+    puts "2: Изменить название компании-производителя"
+    puts "0: Назад"
+  end
+
+  def show_monufacturer_name(obj)
+    if obj.get_manufacturer_name != nil then 
+      puts "Создан компанией #{obj.get_manufacturer_name}"
+    else 
+      puts 'Название компании-производителя еще не установлено'
+    end
+  end
+
+  def set_monufacturer_name(obj)
+    puts 'Введите название'
+    obj.set_manufacturer_name(gets.chomp)
+    puts "Название компании-производителя изменено на #{obj.get_manufacturer_name}"
+  end
+
+  def show_or_set_monufacturer_name(obj)
+    loop do
+      message_in_show_or_set_monufacturer_name
+      key = gets.to_i
+      case key
+      when 1
+        show_monufacturer_name(obj)
+        break
+      when 2
+        set_monufacturer_name(obj)
+        break
+      when 0
+        break
+      else
+        puts MESSAGE_INPUT_ERROR
+        next        
+      end
+    end
+  end
+
   def show_train_numbers
     i = 0
     @trains_arr.each { |train| puts "#{i += 1}: #{train.number}"}
@@ -565,6 +610,19 @@ class Menu
     puts "Следующая станция: #{train.next_station.name}" if train.next_station
   end
 
+  def train_operation_monufacturer
+    train = choose_train
+    show_or_set_monufacturer_name(train)
+  end
+
+  def train_operation_find
+    puts 'Введите номер поезда'
+    key = gets.chomp
+    find_result = Train.find(key)
+    return puts 'Поезд с таким именем не найден' if find_result == nil
+    puts "Поезд #{find_result.number} найден!"
+  end
+
   def train_operation_menu
     return puts MESSAGE_TRAINS_ARR_EMPTY if @trains_arr.empty?
     loop do 
@@ -587,6 +645,12 @@ class Menu
       when 5
         train_operation_show_current
         break
+      when 6
+        train_operation_monufacturer
+        break
+      when 7
+        train_operation_find
+        break
       when 0
         break
       else  
@@ -595,7 +659,13 @@ class Menu
       end
       break
     end
-  end 
+  end
+
+  def car_operation_menu
+    return puts MESSAGE_CARS_ARR_EMPTY if @cars_arr.empty?
+    car = choose_car (@cars_arr)
+    show_or_set_monufacturer_name(car)
+  end
 
   def creation_menu
     loop do
@@ -629,12 +699,15 @@ class Menu
       key = gets.to_i
       case key
       when 1
+        car_operation_menu
+        break 
+      when 2
         train_operation_menu
         break
-      when 2
+      when 3
         station_operation_menu
         break
-      when 3
+      when 4
         route_operation_menu
         break
       when 0 

@@ -7,6 +7,7 @@ require_relative 'cargo_train'
 require_relative 'passenger_car'
 require_relative 'cargo_car'
 require_relative 'menu'
+require_relative 'modules'
 
 menu = Menu.new
 menu.run

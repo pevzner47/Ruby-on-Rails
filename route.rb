@@ -1,4 +1,6 @@
+require_relative 'modules'
 class Route
+  include InstanceCounter
   attr_reader :stations
 
   def initialize(start_station, *station_list, end_station)
@@ -10,6 +12,7 @@ class Route
     else
       @stations = [start_station] + station_list[0] + [end_station]
     end
+    register_instance
   end
 
   def add_station(station) # Есть в тз => public

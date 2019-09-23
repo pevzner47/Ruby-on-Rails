@@ -1,5 +1,6 @@
 class CargoTrain < Train
   
+  include InstanceCounter
   def initialize(number)
     super(number, 'Cargo')
   end

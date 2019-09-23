@@ -1,4 +1,15 @@
+require_relative 'modules'
 class Train
+  include InstanceCounter
+  @@all_trains = []
+  class << self
+    def find(str)
+      arr = @@all_trains.find_all {|train| train.number == str}
+      return nil if arr == []
+      arr[0]
+    end
+  end
+  include Manufacturer 
   attr_reader :speed, :cars, :number, :route, :type
 
   def initialize(number, type = nil)
@@ -8,6 +19,8 @@ class Train
     @current_station_number = nil
     @cars = []
     @type = type
+    @@all_trains << self
+    register_instance
   end
 
   def increase_speed(value) #Есть в тз => public

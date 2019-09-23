@@ -1,9 +1,21 @@
+require_relative 'modules'
 class Station
+  include InstanceCounter
+
+  @@all_stations = []
+
+  class << self
+    def all
+      @@all_stations
+    end
+  end
   attr_reader :train_list, :name
 
   def initialize(name)
     @name = name
     @train_list = []
+    @@all_stations << self
+    register_instance
   end
 
   def train_in(train) #Есть в тз => public
