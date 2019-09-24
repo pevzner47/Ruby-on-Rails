@@ -23,7 +23,6 @@ class Menu
         next
       end
     end
-    Train.instanses
   end
 
   private
@@ -484,8 +483,8 @@ class Menu
 
   def set_monufacturer_name(obj)
     puts 'Введите название'
-    obj.set_manufacturer_name(gets.chomp)
-    puts "Название компании-производителя изменено на #{obj.get_manufacturer_name}"
+    obj.manufacturer = gets.chomp
+    puts "Название компании-производителя изменено на #{obj.manufacturer}"
   end
 
   def show_or_set_monufacturer_name(obj)

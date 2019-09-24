@@ -1,12 +1,11 @@
-require_relative 'modules'
+require_relative 'instance_counter'
+require_relative 'manufacturer'
 class Train
   include InstanceCounter
-  @@all_trains = []
+  @@all_trains = {}
   class << self
     def find(str)
-      arr = @@all_trains.find_all {|train| train.number == str}
-      return nil if arr == []
-      arr[0]
+      @@all_trains[str]
     end
   end
   include Manufacturer 
@@ -19,7 +18,7 @@ class Train
     @current_station_number = nil
     @cars = []
     @type = type
-    @@all_trains << self
+    @@all_trains[self.number] = self
     register_instance
   end
 
