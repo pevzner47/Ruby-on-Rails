@@ -11,8 +11,12 @@ module InstanceCounter
       @instances ||= 0
     end 
 
+    def instances=(value)
+      @instances = value
+    end
+
     def intrans_add
-      @instances = self.instances + 1 #ничего лучше не придумал
+      self.instances += 1
     end
   end
 
