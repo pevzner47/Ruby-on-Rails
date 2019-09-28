@@ -13,10 +13,10 @@ class Station
 
   def initialize(name)
     @name = name
+    validate!
     @train_list = []
     @@all_stations << self
     register_instance
-    validate!(name)
   end
 
   def train_in(train)
@@ -33,12 +33,12 @@ class Station
 
   protected
 
-  def validate!(name)
-    raise 'Название станции не должно быть пустым' if name !~ /^\w+/
+  def validate!
+    raise 'Название станции не должно быть пустым' if @name !~ /^\w+/
   end
 
-  def valid?(name)
-    validate!(name)
+  def valid?
+    validate!
     true
   rescue
     false

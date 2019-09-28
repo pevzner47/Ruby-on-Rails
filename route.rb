@@ -12,6 +12,7 @@ class Route
     else
       @stations = [start_station] + station_list[0] + [end_station]
     end
+    validate!
     register_instance
   end
 
@@ -33,5 +34,12 @@ class Route
 
   def end_station
     @stations[-1]
+  end
+
+  protected
+
+  def validate!
+    @stations.each {|station| raise 'Неверный класс входных данных' if station.class != Station}
+    raise 'Первая и конечная станции совпадают' if @stations[0] == @stations[-1]
   end
 end

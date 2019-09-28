@@ -187,43 +187,50 @@ class Menu
     loop do
       puts "Введите номер поезда"
       number = gets.chomp.to_str
-      if !Train.valid?(number) then
-        puts 'Неверный формат номера'
-        next
-      end
       return number
     end
   end
 
   def create_passenger_train(number)
-    @trains_arr << PassengerTrain.new(number)
+    train = PassengerTrain.new(number)
+    @trains_arr << train
     puts "Поезд #{number} создан!"
+  rescue RuntimeError => e
+    puts "Неверный формат номера"
+    return create_passenger_train(enter_train_number)
   end
 
   def create_cargo_train(number)
-    @trains_arr << CargoTrain.new(number)
+    train = CargoTrain.new(number)      
+    @trains_arr << train
     puts "Поезд #{number} создан!"
+  rescue RuntimeError => e
+    puts "Неверный формат номера"
+    return create_cargo_train(enter_train_number)
   end
 
   def create_simple_train(number)
-    @trains_arr << Train.new(number)
+    train = Train.new(number)
+    @trains_arr << train
     puts "Поезд #{number} создан!"
+  rescue RuntimeError => e
+    puts "Неверный формат номера"
+    return create_simple_train(enter_train_number)
   end
 
   def train_creation_menu
-    number = enter_train_number
     loop do      
       message_in_train_creation_menu
       key = gets.to_i
       case key
       when 1
-        create_passenger_train(number)
+        create_passenger_train(enter_train_number)
         break
       when 2
-        create_cargo_train(number)
+        create_cargo_train(enter_train_number)
         break
       when 3
-        create_simple_train(number)
+        create_simple_train(enter_train_number)
         break
       when 0
         break
