@@ -30,12 +30,14 @@ class Menu
   #message
   MESSAGE_INPUT_ERROR = "Ошибка ввода!"
   MESSAGE_CAR_CREATED = "Вагон создан!"
+  MESSAGE_CAR_ADDED = 'Вагон добавлен!'
+  MESSAGE_CAR_NOT_ADDED = 'Ошибка! Вагон не добавлен! '
   MESSAGE_CARS_ARR_EMPTY = 'Ни одного вагона не найдено'
   MESSAGE_TRAINS_ARR_EMPTY = 'Ни одного поезда не найдено'
   MESSAGE_STATIONS_ARR_EMPTY = 'Ни одной станции не найдено'
   MESSAGE_ROUTES_ARR_EMPTY = 'Ни одного маршрута не найдено'
   MESSAGE_NO_CARS_TO_ADD = 'Все вагоны уже добавлены к этому поезду'
-  MESSAGE_TRAIN_HAS_NO_ROUTE = 'У этого поезда еще не задан маршрут'
+  MESSAGE_TRAIN_HAS_NO_ROUTE = 'У этого поезда еще не задан маршрут'  
   MESSAGE_NO_CARS_TO_DELETE = 'У поезда нет вагонов'
   MINIMUM_NUMBER_OF_STATIONS = 2
 
@@ -100,6 +102,10 @@ class Menu
     puts "0: Назад"
   end
 
+  def message_train_sent_to_the_station(train)
+    puts "Поезд отправлен на станцию #{train.current_station.name}"
+  end
+
   def message_in_train_operation_menu
     puts '1: Добавить вагон'
     puts '2: Удалить вагон'
@@ -115,6 +121,12 @@ class Menu
     puts 'Выберите маршрут'
     show_route_list(@routes_arr)
     puts "0: Назад"
+  end
+
+  def message_in_add_or_delete_station(route)
+    puts "1: Добавить станцию в маршрут #{show_route_name(route)}"
+    puts "2: Удалить станцию из маршрута #{show_route_name(route)}"
+    puts '0: Назад'
   end
 
   def message_in_operation_menu
@@ -171,6 +183,18 @@ class Menu
   end
   #creation menu
     #train
+  def enter_train_number
+    loop do
+      puts "Введите номер поезда"
+      number = gets.chomp.to_str
+      if !Train.valid?(number) then
+        puts 'Неверный формат номера'
+        next
+      end
+      return number
+    end
+  end
+
   def create_passenger_train(number)
     @trains_arr << PassengerTrain.new(number)
     puts "Поезд #{number} создан!"
@@ -187,8 +211,7 @@ class Menu
   end
 
   def train_creation_menu
-    puts "Введите номер поезда"
-    number = gets.chomp.to_str
+    number = enter_train_number
     loop do      
       message_in_train_creation_menu
       key = gets.to_i
@@ -317,12 +340,6 @@ class Menu
     "#{route.stations[0].name} - #{route.stations[-1].name}"
   end
 
-  def message_in_add_or_delete_station(route)
-    puts "1: Добавить станцию в маршрут #{show_route_name(route)}"
-    puts "2: Удалить станцию из маршрута #{show_route_name(route)}"
-    puts '0: Назад'
-  end
-
   def show_route_list(route_list)
     i = 0
     route_list.each { |route| puts "#{i += 1}: #{show_route_name(route)}"}
@@ -337,7 +354,7 @@ class Menu
       when 1..stations_arr.size
         return stations_arr[key-1]
       else 
-        puts 'Ошибка ввода!'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -359,7 +376,7 @@ class Menu
         puts "Станция #{stations_to_add[key-1].name} добавлена" 
         break
       else 
-        puts 'Ошибка ввода'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -381,7 +398,7 @@ class Menu
         puts "Станция #{stations_to_show[key-1].name} удалена" 
         break
       else 
-        puts 'Ошибка ввода'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -401,7 +418,7 @@ class Menu
       when 0
         break
       else 
-        puts 'Ошибка ввода'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -419,7 +436,7 @@ class Menu
       when 0
         break
       else
-        puts "Ошибка ввода!"
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -434,7 +451,7 @@ class Menu
       when 1..@stations_arr.size
         return @stations_arr[key-1]
       else 
-        puts 'Ошибка ввода!'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -460,7 +477,7 @@ class Menu
       when 0
         break
       else 
-        puts 'Ошибка ввода!'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -527,7 +544,7 @@ class Menu
       when 1..routes_arr.size
         return routes_arr[key-1]
       else 
-        puts 'Ошибка ввода!'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -542,7 +559,7 @@ class Menu
       when 1..@trains_arr.size
         return @trains_arr[key-1]
       else 
-        puts 'Ошибка ввода!'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -556,8 +573,10 @@ class Menu
       case key
       when 1..cars.size
         return cars[key-1]
+      when 0
+        break
       else 
-        puts 'Ошибка ввода!'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -568,7 +587,11 @@ class Menu
     train = choose_train
     cars_to_show = @cars_arr - train.cars
     return puts MESSAGE_NO_CARS_TO_ADD if cars_to_show.empty?
-    train.add_car (choose_car(cars_to_show))
+    if train.add_car (choose_car(cars_to_show)) then
+      puts MESSAGE_CAR_ADDED
+    else
+      puts MESSAGE_CAR_NOT_ADDED
+    end    
   end
 
   def train_operation_delete_car
@@ -576,6 +599,23 @@ class Menu
     cars_to_show = train.cars
     return puts MESSAGE_NO_CARS_TO_DELETE if cars_to_show.empty?
     train.delete_car (choose_car(cars_to_show))
+    puts 'Вагон удален'
+  end
+
+  def train_operation_move_forward(train)
+    if train.move_forward then
+      message_train_sent_to_the_station(train)
+    else
+      puts "Невозможно отправить поезд вперед!" 
+    end
+  end
+
+  def train_operation_move_back(train)
+    if train.move_back then
+      message_train_sent_to_the_station(train)
+    else
+      puts "Невозможно отправить поезд назад!"
+    end
   end
 
   def train_operation_send_train
@@ -588,15 +628,15 @@ class Menu
       key = gets.to_i
       case key
       when 1
-        train.move_forward
+        train_operation_move_forward(train)
         break
       when 2
-        train.move_back
+        train_operation_move_back(train)
         break
       when 0 
         break
       else
-        puts 'Ошибка ввода!'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end
@@ -653,7 +693,7 @@ class Menu
       when 0
         break
       else  
-        puts 'Ошибка ввода!'
+        puts MESSAGE_INPUT_ERROR
         next
       end
       break
@@ -663,7 +703,7 @@ class Menu
   def car_operation_menu
     return puts MESSAGE_CARS_ARR_EMPTY if @cars_arr.empty?
     car = choose_car (@cars_arr)
-    show_or_set_monufacturer_name(car)
+    show_or_set_monufacturer_name(car) if car != nil
   end
 
   def creation_menu
@@ -712,7 +752,7 @@ class Menu
       when 0 
         break
       else
-        puts 'Ошибка ввода!'
+        puts MESSAGE_INPUT_ERROR
         next
       end
     end

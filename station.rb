@@ -16,17 +16,31 @@ class Station
     @train_list = []
     @@all_stations << self
     register_instance
+    validate!(name)
   end
 
-  def train_in(train) #Есть в тз => public
+  def train_in(train)
     @train_list << train
   end
 
-  def train_out(train) #Есть в тз => public
+  def train_out(train)
     @train_list.delete(train)
   end
 
-  def number_of_typical_trains(type) #Есть в тз => public
+  def number_of_typical_trains(type)
     @train_list.count {|train| train.type == type}
+  end
+
+  protected
+
+  def validate!(name)
+    raise 'Название станции не должно быть пустым' if name !~ /^\w+/
+  end
+
+  def valid?(name)
+    validate!(name)
+    true
+  rescue
+    false
   end
 end
