@@ -1,7 +1,8 @@
 require_relative 'instance_counter'
+require_relative 'valid'
 class Station
   include InstanceCounter
-
+  include Valid
   @@all_stations = []
 
   class << self
@@ -35,12 +36,5 @@ class Station
 
   def validate!
     raise 'Название станции не должно быть пустым' if @name !~ /^\w+/
-  end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
   end
 end

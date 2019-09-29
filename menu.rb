@@ -206,7 +206,7 @@ class Menu
     puts "Поезд #{number} создан!"
   rescue RuntimeError => e
     puts "Неверный формат номера"
-    return create_cargo_train(enter_train_number)
+    retry
   end
 
   def create_simple_train(number)
@@ -244,8 +244,12 @@ class Menu
   def stations_creation_menu
     puts 'Введите название станции'
     name = gets.chomp.to_str
-    @stations_arr << Station.new(name)
+    station = Station.new(name)
+    @stations_arr << station
     puts "Станция #{name} создана!"
+  rescue RuntimeError => e
+    puts "Название станции не должно быть пустым"
+    retry
   end
 #routes
   def show_object_names (arr)

@@ -1,7 +1,9 @@
 require_relative 'instance_counter'
 require_relative 'manufacturer'
+require_relative 'valid'
 class Train
   include InstanceCounter
+  include Valid
   @@all_trains = {}
   class << self
     def find(str)
@@ -12,13 +14,13 @@ class Train
   attr_reader :speed, :cars, :number, :route, :type
 
   def initialize(number, type = nil)
-    @number = number
-    validate!    
+    @number = number 
     @speed = 0
     @route = nil
     @current_station_number = nil
     @cars = []
     @type = type
+    validate!
     @@all_trains[self.number] = self
     register_instance
   end
@@ -94,11 +96,4 @@ class Train
   def validate!
     raise 'Неверный формат номера' if @number !~ /^\w{3}-?\w{2}$/
   end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
-  end  
 end

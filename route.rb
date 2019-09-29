@@ -1,6 +1,8 @@
 require_relative 'instance_counter'
+require_relative 'valid'
 class Route
   include InstanceCounter
+  include Valid
   attr_reader :stations
 
   def initialize(start_station, *station_list, end_station)
@@ -39,7 +41,7 @@ class Route
   protected
 
   def validate!
-    @stations.each {|station| raise 'Неверный класс входных данных' if station.class != Station}
-    raise 'Первая и конечная станции совпадают' if @stations[0] == @stations[-1]
+    raise 'Неверный класс входных данных' if !@stations.all?{|station| station.class == Station}
+    raise 'Первая и конечная станции совпадают' if start_station == end_station
   end
 end
