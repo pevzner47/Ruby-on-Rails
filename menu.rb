@@ -191,16 +191,18 @@ class Menu
     end
   end
 
-  def create_passenger_train(number)
+  def create_passenger_train
+    number = enter_train_number
     train = PassengerTrain.new(number)
     @trains_arr << train
     puts "Поезд #{number} создан!"
   rescue RuntimeError => e
     puts "Неверный формат номера"
-    return create_passenger_train(enter_train_number)
+    retry
   end
 
-  def create_cargo_train(number)
+  def create_cargo_train
+    number = enter_train_number
     train = CargoTrain.new(number)      
     @trains_arr << train
     puts "Поезд #{number} создан!"
@@ -209,13 +211,14 @@ class Menu
     retry
   end
 
-  def create_simple_train(number)
+  def create_simple_train
+    number = enter_train_number
     train = Train.new(number)
     @trains_arr << train
     puts "Поезд #{number} создан!"
   rescue RuntimeError => e
     puts "Неверный формат номера"
-    return create_simple_train(enter_train_number)
+    retry
   end
 
   def train_creation_menu
@@ -224,13 +227,13 @@ class Menu
       key = gets.to_i
       case key
       when 1
-        create_passenger_train(enter_train_number)
+        create_passenger_train
         break
       when 2
-        create_cargo_train(enter_train_number)
+        create_cargo_train
         break
       when 3
-        create_simple_train(enter_train_number)
+        create_simple_train
         break
       when 0
         break

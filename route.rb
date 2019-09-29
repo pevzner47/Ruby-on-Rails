@@ -41,7 +41,7 @@ class Route
   protected
 
   def validate!
-    raise 'Неверный класс входных данных' if !@stations.all?{|station| station.class == Station}
+    raise 'Неверный класс входных данных' unless @stations.all?(Station)
     raise 'Первая и конечная станции совпадают' if start_station == end_station
   end
 end
