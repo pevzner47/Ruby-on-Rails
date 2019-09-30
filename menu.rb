@@ -109,11 +109,12 @@ class Menu
   def message_in_train_operation_menu
     puts '1: Добавить вагон'
     puts '2: Удалить вагон'
-    puts '3: Взять маршрут'
-    puts '4: Отправить по заданному маршруту'
-    puts '5: Показать положение позеда в маршруте'
-    puts '6: Информация о производителе'
-    puts '7: Найти поезд по номеру'
+    puts '3: Показать вагоны'
+    puts '4: Взять маршрут'
+    puts '5: Отправить по заданному маршруту'
+    puts '6: Показать положение позеда в маршруте'
+    puts '7: Информация о производителе'
+    puts '8: Найти поезд по номеру'
     puts '0: Назад'
   end
 
@@ -127,6 +128,12 @@ class Menu
     puts "1: Добавить станцию в маршрут #{show_route_name(route)}"
     puts "2: Удалить станцию из маршрута #{show_route_name(route)}"
     puts '0: Назад'
+  end
+
+  def message_in_show_or_set_monufacturer_name
+    puts "1: Показать название компании-производителя"
+    puts "2: Изменить название компании-производителя"
+    puts "0: Назад"
   end
 
   def message_in_operation_menu
@@ -150,16 +157,29 @@ class Menu
     puts '2: Назад по маршруту'
     puts '0: Назад'
   end
+
   #creation menu
     #car
   def create_passenger_car
-    @cars_arr << PassengerCar.new
+    puts 'Введите общее кол-во мест в вагоне'
+    number_of_seats = gets.chomp
+    car = PassengerCar.new(number_of_seats)
+    @cars_arr << car
     puts MESSAGE_CAR_CREATED
+  rescue RuntimeError => e
+    puts e.message
+    retry
   end 
 
   def create_cargo_car
-    @cars_arr << CargoCar.new
+    puts 'Введите общий объем вагона'
+    overall_volume = gets.chomp
+    car = CargoCar.new(overall_volume)
+    @cars_arr << car
     puts MESSAGE_CAR_CREATED
+  rescue RuntimeError => e
+    puts e.message
+    retry
   end
 
   def car_creation_menu
@@ -197,7 +217,7 @@ class Menu
     @trains_arr << train
     puts "Поезд #{number} создан!"
   rescue RuntimeError => e
-    puts "Неверный формат номера"
+    puts e.message
     retry
   end
 
@@ -207,7 +227,7 @@ class Menu
     @trains_arr << train
     puts "Поезд #{number} создан!"
   rescue RuntimeError => e
-    puts "Неверный формат номера"
+    puts e.message
     retry
   end
 
@@ -217,7 +237,7 @@ class Menu
     @trains_arr << train
     puts "Поезд #{number} создан!"
   rescue RuntimeError => e
-    puts "Неверный формат номера"
+    puts e.message
     retry
   end
 
@@ -473,7 +493,8 @@ class Menu
 
   def show_train_list_of_this_station (station)    
     return puts 'На станции еще нет поездов' if station.train_list.empty?
-    station.train_list.each {|train| puts train.number}
+    block = proc {|train| puts train.number}
+    station.block_to_trains(&block)
   end
 
   def station_operation_menu
@@ -497,12 +518,6 @@ class Menu
     end
   end
   #train
-
-  def message_in_show_or_set_monufacturer_name
-    puts "1: Показать название компании-производителя"
-    puts "2: Изменить название компании-производителя"
-    puts "0: Назад"
-  end
 
   def show_monufacturer_name(obj)
     if obj.get_manufacturer_name != nil then 
@@ -535,6 +550,21 @@ class Menu
         puts MESSAGE_INPUT_ERROR
         next        
       end
+    end
+  end
+
+  def take_a_seat(car)
+    return puts 'Место успешно занято!' if car.take_a_seat
+    puts 'Мест болше нет!'
+  end
+
+  def take_a_volume(car)
+    loop do
+      puts 'Введите кол-во объема, которое нужно занять'
+      value = gets.to_i
+      return puts "#{value} едениц объема успешно занято!" if car.take_a_volume(value)
+      puts 'В вагоне нет столько места!'
+      break
     end
   end
 
@@ -616,6 +646,12 @@ class Menu
     puts 'Вагон удален'
   end
 
+  def train_operation_show_cars
+    train = choose_train
+    block = proc {|car| puts car.type}
+    train.block_to_cars(&block)
+  end 
+
   def train_operation_move_forward(train)
     if train.move_forward then
       message_train_sent_to_the_station(train)
@@ -689,19 +725,22 @@ class Menu
         train_operation_delete_car
         break
       when 3
+        train_operation_show_cars
+        break
+      when 4
         choose_train.take_route(choose_route (@routes_arr))
         puts 'Маршрут выбран!'
         break
-      when 4
+      when 5
         train_operation_send_train
         break
-      when 5
+      when 6
         train_operation_show_current
         break
-      when 6
+      when 7
         train_operation_monufacturer
         break
-      when 7
+      when 8
         train_operation_find
         break
       when 0
@@ -717,7 +756,27 @@ class Menu
   def car_operation_menu
     return puts MESSAGE_CARS_ARR_EMPTY if @cars_arr.empty?
     car = choose_car (@cars_arr)
-    show_or_set_monufacturer_name(car) if car != nil
+    loop do
+      puts 'Выберите действие'
+      puts car.type == 'Passenger' ? '1: Занять место в вагоне' : '1: Занять объем'
+      puts '2: Информация о производителе'
+      puts '0: Назад'
+      key = gets.to_i
+      case key
+      when 1
+        return take_a_seat(car) if car.type == 'Passenger'
+        take_a_volume(car)
+        break
+      when 2
+        show_or_set_monufacturer_name(car) if car != nil
+        break
+      when 0
+        break
+      else  
+        puts MESSAGE_INPUT_ERROR
+        next
+      end
+    end
   end
 
   def creation_menu

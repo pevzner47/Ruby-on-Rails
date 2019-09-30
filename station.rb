@@ -32,6 +32,10 @@ class Station
     @train_list.count {|train| train.type == type}
   end
 
+  def block_to_trains(&block)
+    @train_list.each {|train| yield(train)}
+  end
+  
   protected
 
   def validate!

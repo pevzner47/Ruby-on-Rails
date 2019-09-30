@@ -77,6 +77,10 @@ class Train
     @route.stations[@current_station_number + 1] if !last_station?
   end
 
+  def block_to_cars(&block)
+    @cars.each {|car| yield(car)}
+  end
+
   protected
   
   def stopped? #используется в дочерних классах
