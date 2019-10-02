@@ -78,7 +78,7 @@ class Train
   end
 
   def block_to_cars(&block)
-    @cars.each {|car| yield(car)}
+    @cars.each_with_index {|car, index| yield(car, index)}
   end
 
   protected

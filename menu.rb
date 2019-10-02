@@ -5,6 +5,21 @@ class Menu
     @trains_arr = []
     @stations_arr = []
     @routes_arr = []
+    
+    pas_train = PassengerTrain.new 'pas12'
+    cargo_train = CargoTrain.new 'cargo'
+    pcar1 = PassengerCar.new '12'
+    pcar2 = PassengerCar.new '20'
+
+    ccar1 = CargoCar.new '120'
+    ccar2 = CargoCar.new '50'
+    @cars_arr << pcar1
+    @cars_arr << pcar2
+    @cars_arr << ccar1
+    @cars_arr << ccar2
+
+    @trains_arr << pas_train
+    @trains_arr << cargo_train
   end
 
   def run 
@@ -493,7 +508,7 @@ class Menu
 
   def show_train_list_of_this_station (station)    
     return puts 'На станции еще нет поездов' if station.train_list.empty?
-    block = proc {|train| puts train.number}
+    block = proc {|train| puts "#{train.number} #{train.type} #{train.cars.size}"}
     station.block_to_trains(&block)
   end
 
@@ -554,7 +569,7 @@ class Menu
   end
 
   def take_a_seat(car)
-    return puts 'Место успешно занято!' if car.take_a_seat
+    return puts 'Место успешно занято!' if car.take_a_volume
     puts 'Мест болше нет!'
   end
 
@@ -648,7 +663,8 @@ class Menu
 
   def train_operation_show_cars
     train = choose_train
-    block = proc {|car| puts car.type}
+    return puts 'У поезда нет вагонов' if train.cars.empty?
+    block = proc {|car, index| puts "#{index + 1} #{car.type} #{car.taken_volume} #{car.free_volume}"}
     train.block_to_cars(&block)
   end 
 
@@ -756,6 +772,7 @@ class Menu
   def car_operation_menu
     return puts MESSAGE_CARS_ARR_EMPTY if @cars_arr.empty?
     car = choose_car (@cars_arr)
+    return if !car 
     loop do
       puts 'Выберите действие'
       puts car.type == 'Passenger' ? '1: Занять место в вагоне' : '1: Занять объем'

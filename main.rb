@@ -10,5 +10,6 @@ require_relative 'menu'
 require_relative 'manufacturer'
 require_relative 'instance_counter'
 
+
 menu = Menu.new
 menu.run
