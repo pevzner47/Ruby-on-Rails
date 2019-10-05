@@ -5,7 +5,7 @@ class Menu
     @trains_arr = []
     @stations_arr = []
     @routes_arr = []
-    
+=begin
     pas_train = PassengerTrain.new 'pas12'
     cargo_train = CargoTrain.new 'cargo'
     pcar1 = PassengerCar.new '12'
@@ -20,6 +20,8 @@ class Menu
 
     @trains_arr << pas_train
     @trains_arr << cargo_train
+    это для тестирования
+=end 
   end
 
   def run 

@@ -1,8 +1,9 @@
 require_relative 'instance_counter'
-require_relative 'valid'
+require_relative 'accessor'
+require_relative 'validation'
 class Station
+  include Validation
   include InstanceCounter
-  include Valid
   @@all_stations = []
 
   class << self
@@ -11,6 +12,7 @@ class Station
     end
   end
   attr_reader :train_list, :name
+  validate :name, :presence
 
   def initialize(name)
     @name = name
@@ -34,11 +36,5 @@ class Station
 
   def block_to_trains(&block)
     @train_list.each {|train| yield(train)}
-  end
-  
-  protected
-
-  def validate!
-    raise 'Название станции не должно быть пустым' if @name !~ /^\w+/
   end
 end
